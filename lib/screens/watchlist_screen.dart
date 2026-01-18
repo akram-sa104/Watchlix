@@ -8,7 +8,6 @@ class WatchlistScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Memantau data watchlist dari provider asli Anda
     final watchlist = ref.watch(watchlistProvider);
 
     return Scaffold(
@@ -39,7 +38,6 @@ class WatchlistScreen extends ConsumerWidget {
                     itemBuilder: (context, index) {
                       final movie = watchlist[index];
                       
-                      // VALUEKEY INI KUNCINYA: Memastikan ID movie lama terdeteksi saat dihapus
                       return Container(
                         key: ValueKey(movie.id), 
                         margin: const EdgeInsets.only(bottom: 16),
@@ -62,9 +60,7 @@ class WatchlistScreen extends ConsumerWidget {
                           trailing: IconButton(
                             icon: const Icon(Icons.delete, color: Colors.redAccent),
                             onPressed: () {
-                              // MEMANGGIL FUNGSI ASLI ANDA
-                              // Jika ini tidak terhapus di database, pastikan di MovieNotifier 
-                              // fungsi removeFromWatchlist menggunakan ID yang benar.
+                              
                               ref.read(watchlistProvider.notifier).removeFromWatchlist(movie);
                               
                               ScaffoldMessenger.of(context).showSnackBar(

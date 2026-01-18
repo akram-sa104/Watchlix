@@ -12,19 +12,16 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
   final _passwordController = TextEditingController();
   bool isLogin = true;
   String? _errorMessage;
-
-  // Controller untuk animasi 'bernafas' pada background orbs (Explicit Animation)
   late AnimationController _glowController;
   late Animation<double> _glowAnimation;
 
   @override
   void initState() {
     super.initState();
-    // Inisialisasi controller sesuai materi Chapter 9 [cite: 17, 85]
     _glowController = AnimationController(
       duration: const Duration(seconds: 4),
       vsync: this,
-    )..repeat(reverse: true); // Animasi bolak-balik terus menerus [cite: 13]
+    )..repeat(reverse: true); 
 
     _glowAnimation = Tween<double>(begin: 1.0, end: 1.2).animate(
       CurvedAnimation(parent: _glowController, curve: Curves.easeInOut),
@@ -33,7 +30,6 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
 
   @override
   void dispose() {
-    // Selalu dispose controller untuk mencegah memory leak [cite: 87, 102]
     _glowController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
@@ -76,7 +72,7 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
       body: Stack(
         alignment: Alignment.center,
         children: [
-          // 1. Background Layer: Radial Gradient [cite: 11]
+        
           Container(
             decoration: BoxDecoration(
               gradient: RadialGradient(
@@ -90,7 +86,7 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
             ),
           ),
 
-          // 2. Animated Glow Orbs (Dekorasi Latar Belakang)
+         
           AnimatedBuilder(
             animation: _glowAnimation,
             builder: (context, child) {
@@ -111,7 +107,7 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
             },
           ),
 
-          // 3. Main Content Layer
+         
           SafeArea(
             child: Center(
               child: SingleChildScrollView(
@@ -119,7 +115,6 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Hero Animation agar logo sinkron dengan Splash Screen 
                     Hero(
                       tag: 'logo-watchlix',
                       child: Material(
@@ -141,7 +136,7 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
                     ),
                     const SizedBox(height: 40),
 
-                    // Card Login (Glassmorphism) [cite: 30, 80]
+                  
                     ClipRRect(
                       borderRadius: BorderRadius.circular(25),
                       child: BackdropFilter(
@@ -166,7 +161,7 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
                               _buildInput(controller: _passwordController, label: 'Password', icon: Icons.lock_outline, isPass: true),
                               const SizedBox(height: 30),
                               
-                              // Tombol Utama
+          
                               SizedBox(
                                 width: double.infinity,
                                 height: 55,
@@ -204,7 +199,6 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
     );
   }
 
-  // Helper UI: Input Field
   Widget _buildInput({required TextEditingController controller, required String label, required IconData icon, bool isPass = false}) {
     return TextField(
       controller: controller,
@@ -225,7 +219,6 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
     );
   }
 
-  // Helper UI: Background Orbs
   Widget _buildGlowOrb(double size, Color color) {
     return Container(
       width: size,

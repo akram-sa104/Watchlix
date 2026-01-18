@@ -93,7 +93,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  // FUNGSI APPBAR ASLI (Watchlist & Genre Kembali)
+
   Widget _buildCustomAppBar() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
@@ -133,14 +133,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
         ),
         onChanged: (query) {
-          setState(() {}); // Menjaga UI tetap update saat ngetik
+          setState(() {}); 
           ref.read(searchProvider.notifier).searchMovies(query);
         },
       ),
     );
   }
 
-  // Widget Row untuk AsyncValue (Data API)
   Widget _buildMovieRow(AsyncValue<List<Movie>> asyncValue, String title) {
     return asyncValue.when(
       data: (movies) => _buildMovieRowManual(movies, title),
@@ -149,7 +148,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  // Widget Row untuk List Murni (Search/Data yang sudah ada)
   Widget _buildMovieRowManual(List<Movie> movies, String title) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

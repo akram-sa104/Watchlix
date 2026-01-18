@@ -60,24 +60,24 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
       body: Stack(
         alignment: Alignment.center,
         children: [
-          // 1. BACKGROUND LAYER: Radial Gradient (Aura Merah Gelap)
+          // 1. BACKGROUND GRADIENT LAYER
           Container(
             decoration: const BoxDecoration(
               gradient: RadialGradient(
                 center: Alignment.center,
                 radius: 1.2,
                 colors: [
-                  Color(0xFF3B0000), // Pusat merah gelap
-                  Colors.black,      // Pinggiran hitam pekat
+                  Color(0xFF3B0000), 
+                  Colors.black,     
                 ],
               ),
             ),
           ),
 
-          // 2. PARTICLE LAYER: Tekstur cahaya samar di background
+          // 2. LAYER PARTIKEL PENDEARAN CAHAYA
           ..._buildBackgroundParticles(),
 
-          // 3. LAYER ANIMASI HURUF 'W' (Zoom Out Efek Netflix)
+          // 3. LAYER LOGO "W" DENGAN EFEK PENDARAN
           AnimatedBuilder(
             animation: _controller,
             builder: (context, child) {
@@ -98,7 +98,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
             },
           ),
 
-          // 4. LAYER KONTEN UTAMA: Logo Watchlix & Loading
+          // 4. LAYER TEKS "Watchlix" DAN LOADING INDICATOR
           FadeTransition(
             opacity: _textFadeAnimation,
             child: Column(
@@ -147,7 +147,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     );
   }
 
-  // Fungsi helper untuk membuat pendaran cahaya acak di background
+   
   List<Widget> _buildBackgroundParticles() {
     return List.generate(5, (index) {
       final random = math.Random();

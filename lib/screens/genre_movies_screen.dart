@@ -9,7 +9,6 @@ class GenreMoviesScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // LOGIKA ASLI: Mengambil genreId dari arguments
     final genreId = ModalRoute.of(context)?.settings.arguments as int?;
     
     if (genreId == null) {
@@ -20,7 +19,6 @@ class GenreMoviesScreen extends ConsumerWidget {
       );
     }
 
-    // LOGIKA ASLI: Watch provider genre
     final moviesAsync = ref.watch(moviesByGenreProvider(genreId));
 
     return Scaffold(
@@ -55,13 +53,12 @@ class GenreMoviesScreen extends ConsumerWidget {
                   crossAxisCount: 2,
                   crossAxisSpacing: 16,
                   mainAxisSpacing: 20,
-                  childAspectRatio: 0.65, // Sedikit lebih panjang untuk estetika poster
+                  childAspectRatio: 0.65, 
                 ),
                 itemCount: movies.length,
                 itemBuilder: (context, index) {
                   final movie = movies[index];
                   return GestureDetector(
-                    // FUNGSI ASLI: Navigasi ke Detail
                     onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => MovieDetailScreen(movie: movie)),

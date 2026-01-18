@@ -7,10 +7,6 @@ import '../models/movie.dart';
 
 final supabaseClient = Provider((ref) => Supabase.instance.client);
 
-// ==========================================
-// 1. PROVIDER API TMDB (Fungsi Asli Anda)
-// ==========================================
-
 final moviesProvider = FutureProvider<List<Movie>>((ref) async {
   const apiKey = 'bb4d1dda0f0dc37411d1bab67b07771d'; 
   const url = 'https://api.themoviedb.org/3/movie/popular?api_key=$apiKey';
@@ -71,10 +67,6 @@ final moviesByGenreProvider = FutureProvider.family<List<Movie>, int>((ref, genr
   }
 });
 
-// ==========================================
-// 2. SEARCH NOTIFIER
-// ==========================================
-
 final searchProvider = StateNotifierProvider<SearchNotifier, List<Movie>>((ref) {
   return SearchNotifier();
 });
@@ -93,9 +85,6 @@ class SearchNotifier extends StateNotifier<List<Movie>> {
   }
 }
 
-// ==========================================
-// 3. WATCHLIST NOTIFIER (LOGIKA ANTI-NYANGKUT)
-// ==========================================
 
 final watchlistProvider = StateNotifierProvider<WatchlistNotifier, List<Movie>>((ref) {
   return WatchlistNotifier();
@@ -155,7 +144,6 @@ class WatchlistNotifier extends StateNotifier<List<Movie>> {
       final user = supabase.auth.currentUser;
       if (user == null) return;
 
-      // LANGKAH 1: Cari ID internal (untuk data baru)
       final movieData = await supabase
           .from('movies')
           .select('id')
@@ -164,14 +152,12 @@ class WatchlistNotifier extends StateNotifier<List<Movie>> {
 
       if (movieData != null) {
         final internalId = movieData['id'];
-        // Hapus menggunakan ID internal
         await supabase.from('watchlist').delete().match({
           'user_id': user.id,
           'movie_id': internalId,
         });
       }
 
-      // LANGKAH 2: Coba hapus pakai ID TMDB langsung (Cadangan untuk data lama/sampah)
       await supabase.from('watchlist').delete().match({
         'user_id': user.id,
         'movie_id': movie.id, 
@@ -180,7 +166,6 @@ class WatchlistNotifier extends StateNotifier<List<Movie>> {
     } catch (e) {
       debugPrint("Error Delete: $e");
     } finally {
-      // APAPUN YANG TERJADI: Hapus dari layar HP agar user tidak pusing
       state = state.where((m) => m.id != movie.id).toList();
     }
   }

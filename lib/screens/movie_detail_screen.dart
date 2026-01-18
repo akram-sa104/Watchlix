@@ -16,7 +16,6 @@ class _MovieDetailScreenState extends ConsumerState<MovieDetailScreen> {
   @override
   void initState() {
     super.initState();
-    // FITUR UTAMA: Tetap load watchlist saat masuk
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(watchlistProvider.notifier).loadWatchlist();
     });
@@ -28,21 +27,21 @@ class _MovieDetailScreenState extends ConsumerState<MovieDetailScreen> {
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          // 1. BACKGROUND GRADIENT (Agar tidak hitam polos)
+          // 1. BACKGROUND GRADIENT
           Container(
             decoration: const BoxDecoration(
               gradient: RadialGradient(
                 center: Alignment.topRight,
                 radius: 1.5,
                 colors: [
-                  Color(0xFF3D0808), // Senada dengan Home Screen
+                  Color(0xFF3D0808),
                   Colors.black,
                 ],
               ),
             ),
           ),
 
-          // 2. KONTEN DENGAN EFEK SLIVER (SCROLLING PREMIUM)
+          // 2. CONTENT DETAIL MOVIE
           CustomScrollView(
             slivers: [
               // Header dengan Gambar Poster Besar
@@ -99,7 +98,7 @@ class _MovieDetailScreenState extends ConsumerState<MovieDetailScreen> {
                       
                       const SizedBox(height: 10),
 
-                      // Info Bar (Release Date & Rating)
+                      
                       Row(
                         children: [
                           Icon(Icons.calendar_month, color: Colors.redAccent.withOpacity(0.7), size: 18),
@@ -120,7 +119,7 @@ class _MovieDetailScreenState extends ConsumerState<MovieDetailScreen> {
 
                       const SizedBox(height: 25),
 
-                      // Deskripsi / Overview
+                     
                       const Text(
                         "Overview",
                         style: TextStyle(
@@ -136,11 +135,11 @@ class _MovieDetailScreenState extends ConsumerState<MovieDetailScreen> {
                         style: const TextStyle(
                           color: Colors.white38,
                           fontSize: 15,
-                          height: 1.5, // Menambah line spacing agar nyaman dibaca
+                          height: 1.5, 
                         ),
                       ),
 
-                      const SizedBox(height: 100), // Ruang ekstra untuk tombol di bawah
+                      const SizedBox(height: 100),
                     ],
                   ),
                 ),
@@ -148,7 +147,6 @@ class _MovieDetailScreenState extends ConsumerState<MovieDetailScreen> {
             ],
           ),
 
-          // 3. TOMBOL FLOATING ACTION (FITUR ADD TO WATCHLIST)
           Positioned(
             bottom: 30,
             left: 20,
@@ -175,7 +173,7 @@ class _MovieDetailScreenState extends ConsumerState<MovieDetailScreen> {
                   elevation: 0,
                 ),
                 onPressed: () async {
-                  // FITUR UTAMA: Tetap panggil fungsi aslinya
+              
                   try {
                     await ref.read(watchlistProvider.notifier).addToWatchlist(widget.movie);
                     ScaffoldMessenger.of(context).showSnackBar(
