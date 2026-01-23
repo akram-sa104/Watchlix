@@ -17,11 +17,13 @@ class Movie {
 
   factory Movie.fromJson(Map<String, dynamic> json) {
     return Movie(
-      id: json['id'],
-      title: json['title'],
-      overview: json['overview'],
+      id: json['id'] ?? 0,
+      title: json['title'] ?? 'No Title',
+      overview: (json['overview'] == null || json['overview'].toString().isEmpty)
+          ? "Sinopsis tidak tersedia dalam bahasa ini."
+          : json['overview'],
       posterPath: json['poster_path'] ?? '',
-      releaseDate: json['release_date'] ?? '',
+      releaseDate: json['release_date'] ?? 'N/A',
       genreIds: (json['genre_ids'] as List<dynamic>?)?.map((e) => e as int).toList(),
     );
   }

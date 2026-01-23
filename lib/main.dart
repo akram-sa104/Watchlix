@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:watchlix/screens/genre_movies_screen.dart';
+import 'package:watchlix/screens/setting_screen.dart';
 import 'package:watchlix/screens/splash_screen.dart';
 import 'screens/home_screen.dart'; 
 import 'screens/watchlist_screen.dart';
@@ -41,6 +42,7 @@ class WatchlixApp extends StatelessWidget {
         '/home': (context) => HomeScreen(), 
         '/watchlist': (context) => WatchlistScreen(), 
         '/genre': (context) => GenreScreen(),
+        '/setting': (context) => const SettingScreen(),
         '/genre_movies': (context) => GenreMoviesScreen(),
       },
     );

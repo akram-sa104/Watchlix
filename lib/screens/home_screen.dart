@@ -111,6 +111,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 onPressed: () => Navigator.pushNamed(context, '/genre'),
                 icon: const Icon(Icons.grid_view_rounded, color: Colors.white, size: 28),
               ),
+              IconButton(
+                onPressed: () => Navigator.pushNamed(context, '/setting'),
+                icon: const Icon(Icons.settings, color: Colors.white, size: 28),
+              ),
             ],
           ),
         ],

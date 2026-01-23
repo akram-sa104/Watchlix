@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/movie.dart';
 import '../providers/movie_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MovieDetailScreen extends ConsumerStatefulWidget {
   final Movie movie;
@@ -19,6 +20,23 @@ class _MovieDetailScreenState extends ConsumerState<MovieDetailScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(watchlistProvider.notifier).loadWatchlist();
     });
+  }
+
+  // FUNGSI 1: PLAY MOVIE (Mengarahkan ke Trailer YouTube)
+  Future<void> _playMovie(String title) async {
+    final Uri url = Uri.parse(
+        'https://www.youtube.com/results?search_query=$title+official+trailer');
+    try {
+      if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+        throw Exception('Could not launch $url');
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Could not open YouTube: $e')),
+        );
+      }
+    }
   }
 
   @override
@@ -44,7 +62,6 @@ class _MovieDetailScreenState extends ConsumerState<MovieDetailScreen> {
           // 2. CONTENT DETAIL MOVIE
           CustomScrollView(
             slivers: [
-              // Header dengan Gambar Poster Besar
               SliverAppBar(
                 expandedHeight: MediaQuery.of(context).size.height * 0.6,
                 backgroundColor: Colors.transparent,
@@ -57,9 +74,9 @@ class _MovieDetailScreenState extends ConsumerState<MovieDetailScreen> {
                       Image.network(
                         'https://image.tmdb.org/t/p/w500${widget.movie.posterPath}',
                         fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => const Icon(Icons.error, color: Colors.white),
+                        errorBuilder: (context, error, stackTrace) =>
+                            const Icon(Icons.error, color: Colors.white),
                       ),
-                      // Efek Gradient Overlay pada Gambar agar teks terbaca
                       const DecoratedBox(
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
@@ -78,15 +95,13 @@ class _MovieDetailScreenState extends ConsumerState<MovieDetailScreen> {
                   ),
                 ),
               ),
-
-              // Bagian Detail Informasi
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Judul Film
                       Text(
                         widget.movie.title,
                         style: const TextStyle(
@@ -95,31 +110,29 @@ class _MovieDetailScreenState extends ConsumerState<MovieDetailScreen> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      
                       const SizedBox(height: 10),
-
-                      
                       Row(
                         children: [
-                          Icon(Icons.calendar_month, color: Colors.redAccent.withOpacity(0.7), size: 18),
+                          Icon(Icons.calendar_month,
+                              color: Colors.redAccent.withOpacity(0.7),
+                              size: 18),
                           const SizedBox(width: 5),
                           Text(
                             widget.movie.releaseDate,
-                            style: const TextStyle(color: Colors.white70, fontSize: 14),
+                            style: const TextStyle(
+                                color: Colors.white70, fontSize: 14),
                           ),
                           const SizedBox(width: 20),
                           const Icon(Icons.star, color: Colors.amber, size: 18),
                           const SizedBox(width: 5),
                           const Text(
-                            "8.5", // Contoh statis jika voteAverage belum ada, ganti jika ada
-                            style: TextStyle(color: Colors.white70, fontSize: 14),
+                            "8.5",
+                            style:
+                                TextStyle(color: Colors.white70, fontSize: 14),
                           ),
                         ],
                       ),
-
                       const SizedBox(height: 25),
-
-                     
                       const Text(
                         "Overview",
                         style: TextStyle(
@@ -135,11 +148,10 @@ class _MovieDetailScreenState extends ConsumerState<MovieDetailScreen> {
                         style: const TextStyle(
                           color: Colors.white38,
                           fontSize: 15,
-                          height: 1.5, 
+                          height: 1.5,
                         ),
                       ),
-
-                      const SizedBox(height: 100),
+                      const SizedBox(height: 120), // Spasi lebih untuk tombol bawah
                     ],
                   ),
                 ),
@@ -147,53 +159,83 @@ class _MovieDetailScreenState extends ConsumerState<MovieDetailScreen> {
             ],
           ),
 
+          // 3. UPDATE UI: TOMBOL WATCH NOW & ADD TO WATCHLIST
           Positioned(
             bottom: 30,
             left: 20,
             right: 20,
-            child: Container(
-              height: 60,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.redAccent.withOpacity(0.3),
-                    blurRadius: 15,
-                    offset: const Offset(0, 5),
-                  )
-                ],
-              ),
-              child: ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.redAccent,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
+            child: Row(
+              children: [
+                // Tombol Utama: Watch Now
+                Expanded(
+                  flex: 4,
+                  child: Container(
+                    height: 60,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.redAccent.withOpacity(0.3),
+                          blurRadius: 15,
+                          offset: const Offset(0, 5),
+                        )
+                      ],
+                    ),
+                    child: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.black,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        elevation: 0,
+                      ),
+                      onPressed: () => _playMovie(widget.movie.title),
+                      icon: const Icon(Icons.play_arrow_rounded, size: 30),
+                      label: const Text(
+                        'Watch Now',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 15),
+                // Tombol Secondary: Add to Watchlist
+                Container(
+                  height: 60,
+                  width: 60,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(15),
                   ),
-                  elevation: 0,
+                  child: IconButton(
+                    onPressed: () async {
+                      try {
+                        await ref
+                            .read(watchlistProvider.notifier)
+                            .addToWatchlist(widget.movie);
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              backgroundColor: Colors.green,
+                              content: Text('Successfully added to watchlist!'),
+                            ),
+                          );
+                        }
+                      } catch (e) {
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Error: ${e.toString()}')),
+                          );
+                        }
+                      }
+                    },
+                    icon: const Icon(Icons.add_rounded,
+                        color: Colors.white, size: 30),
+                  ),
                 ),
-                onPressed: () async {
-              
-                  try {
-                    await ref.read(watchlistProvider.notifier).addToWatchlist(widget.movie);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        backgroundColor: Colors.green,
-                        content: Text('Succesfully added to watchlist!'),
-                      ),
-                    );
-                  } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Error: ${e.toString()}')),
-                    );
-                  }
-                },
-                icon: const Icon(Icons.add_rounded, size: 28),
-                label: const Text(
-                  'Add to Watchlist',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-              ),
+              ],
             ),
           ),
         ],

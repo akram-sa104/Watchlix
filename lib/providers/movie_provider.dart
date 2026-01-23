@@ -8,68 +8,96 @@ import '../models/movie.dart';
 final supabaseClient = Provider((ref) => Supabase.instance.client);
 
 final moviesProvider = FutureProvider<List<Movie>>((ref) async {
+  final lang = ref.watch(languageProvider); // Monitor perubahan bahasa
   const apiKey = 'bb4d1dda0f0dc37411d1bab67b07771d'; 
-  const url = 'https://api.themoviedb.org/3/movie/popular?api_key=$apiKey';
+  final url = 'https://api.themoviedb.org/3/movie/popular?api_key=$apiKey&language=$lang';
   final response = await http.get(Uri.parse(url));
   if (response.statusCode == 200) {
     final data = json.decode(response.body);
     return (data['results'] as List).map((e) => Movie.fromJson(e)).toList();
-  } else {
-    throw Exception('Failed to load movies');
-  }
+  } else { throw Exception('Failed to load movies'); }
 });
 
 final topRatedProvider = FutureProvider<List<Movie>>((ref) async {
+  final lang = ref.watch(languageProvider);
   const apiKey = 'bb4d1dda0f0dc37411d1bab67b07771d';
-  const url = 'https://api.themoviedb.org/3/movie/top_rated?api_key=$apiKey';
+  final url = 'https://api.themoviedb.org/3/movie/top_rated?api_key=$apiKey&language=$lang';
   final response = await http.get(Uri.parse(url));
   if (response.statusCode == 200) {
     final data = json.decode(response.body);
     return (data['results'] as List).map((e) => Movie.fromJson(e)).toList();
-  } else {
-    throw Exception('Failed to load top rated');
-  }
+  } else { throw Exception('Failed to load top rated'); }
 });
 
 final upcomingProvider = FutureProvider<List<Movie>>((ref) async {
+  final lang = ref.watch(languageProvider);
   const apiKey = 'bb4d1dda0f0dc37411d1bab67b07771d';
-  const url = 'https://api.themoviedb.org/3/movie/upcoming?api_key=$apiKey';
+  final url = 'https://api.themoviedb.org/3/movie/upcoming?api_key=$apiKey&language=$lang';
   final response = await http.get(Uri.parse(url));
   if (response.statusCode == 200) {
     final data = json.decode(response.body);
     return (data['results'] as List).map((e) => Movie.fromJson(e)).toList();
-  } else {
-    throw Exception('Failed to load upcoming');
-  }
+  } else { throw Exception('Failed to load upcoming'); }
 });
 
 final nowPlayingProvider = FutureProvider<List<Movie>>((ref) async {
+  final lang = ref.watch(languageProvider);
   const apiKey = 'bb4d1dda0f0dc37411d1bab67b07771d';
-  const url = 'https://api.themoviedb.org/3/movie/now_playing?api_key=$apiKey';
+  final url = 'https://api.themoviedb.org/3/movie/now_playing?api_key=$apiKey&language=$lang';
   final response = await http.get(Uri.parse(url));
   if (response.statusCode == 200) {
     final data = json.decode(response.body);
     return (data['results'] as List).map((e) => Movie.fromJson(e)).toList();
-  } else {
-    throw Exception('Failed to load now playing');
-  }
+  } else { throw Exception('Failed to load now playing'); }
 });
 
 final moviesByGenreProvider = FutureProvider.family<List<Movie>, int>((ref, genreId) async {
+  final lang = ref.watch(languageProvider);
   const apiKey = 'bb4d1dda0f0dc37411d1bab67b07771d';
-  final url = 'https://api.themoviedb.org/3/discover/movie?api_key=$apiKey&with_genres=$genreId';
+  final url = 'https://api.themoviedb.org/3/discover/movie?api_key=$apiKey&with_genres=$genreId&language=$lang';
   final response = await http.get(Uri.parse(url));
   if (response.statusCode == 200) {
     final data = json.decode(response.body);
     return (data['results'] as List).map((e) => Movie.fromJson(e)).toList();
-  } else {
-    throw Exception('Failed to load movies for genre');
-  }
+  } else { throw Exception('Failed to load movies for genre'); }
 });
 
 final searchProvider = StateNotifierProvider<SearchNotifier, List<Movie>>((ref) {
   return SearchNotifier();
 });
+
+// Provider untuk status bahasa (default: English)
+final languageProvider = StateProvider<String>((ref) => 'en-US');
+
+// Helper untuk menerjemahkan teks sederhana
+class AppLocalizations {
+  static Map<String, Map<String, String>> values = {
+    'en-US': {
+      'setting': 'Settings',
+      'account': 'Account',
+      'general': 'General',
+      'language': 'Language',
+      'logout': 'Logout',
+      'watch_now': 'Watch Now',
+      'about': 'About',
+      'app version': 'App Version',
+    },
+    'id-ID': {
+      'setting': 'Pengaturan',
+      'account': 'Akun',
+      'general': 'Umum',
+      'language': 'Bahasa',
+      'logout': 'Keluar',
+      'watch_now': 'Tonton Sekarang',
+      'about': 'Tentang',
+      'app version': 'Versi Aplikasi',
+    },
+  };
+
+  static String translate(String key, String lang) {
+    return values[lang]?[key] ?? key;
+  }
+}
 
 class SearchNotifier extends StateNotifier<List<Movie>> {
   SearchNotifier() : super([]);
